@@ -9,7 +9,7 @@ Repository ini melakukan perhitungan area weighted average dan interpolasi IDW u
 - Lihat `requirements.txt`
 
 ## 📁 Struktur Folder Repository
-- `data/PM25/` → Tempatkan file `.nc` PM2.5 di sini.
+- `data_pm25/` → Tempatkan file `.nc` PM2.5 di sini.
 - `data/kabupaten.gpkg` → shapefile administrasi Indonesia level kabupaten/kota
 - `output/` → Folder hasil
 
