@@ -17,4 +17,4 @@ Repository ini melakukan perhitungan area weighted average dan interpolasi IDW u
 
 ```bash
 pip install -r requirements.txt
-python run_pm25_processing.py
+python PM25_IDW.py
