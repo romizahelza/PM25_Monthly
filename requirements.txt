@@ -1,0 +1,11 @@
+Daftar library Python yang dibutuhkan:
+
+```txt
+xarray
+geopandas
+pandas
+numpy
+scipy
+shapely
+rasterio
+tqdm
