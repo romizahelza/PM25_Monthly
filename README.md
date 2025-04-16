@@ -1,7 +1,7 @@
 # PM25_Monthly
 Calculating monthly PM 2.5 values in Indonesia at district level using average weighted area.
 
-Ekstraksi dan interpolasi menggunakan metode IDW untuk menghitung nilai PM 2.5 
+Ekstraksi dan interpolasi menggunakan metode IDW untuk menghitung nilai PM 2.5.
 Repository ini melakukan perhitungan area weighted average dan interpolasi IDW untuk PM 2.5 setiap bulan di Indonesia pada level kabupaten dari file NetCDF.
 
 ## 🔧 Requirements
