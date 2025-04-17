@@ -11,6 +11,7 @@ from multiprocessing import Pool, cpu_count
 from affine import Affine
 
 def idw_interpolation(points, values, grid_x, grid_y, p=2):
+    """Membuat fungsi untuk melakukan interpolasi IDW (Inverse Distance Weight"""
     result = np.zeros((len(grid_y), len(grid_x)))
     for i, y in enumerate(grid_y):
         for j, x in enumerate(grid_x):
@@ -25,12 +26,14 @@ def idw_interpolation(points, values, grid_x, grid_y, p=2):
     return result
 
 def process_kabupaten(args):
+    """Membuat fungsi untuk memproses interpolasi IDW dan
+    perhitungan average weighted area untuk setiap kabupaten/kota"""
     kabupaten, lats, lons, pm25_array, transform, month_id = args
     kabupaten_id = kabupaten["KDBBPS"]
     kabupaten_geom = kabupaten["geometry"]
     bounds = kabupaten_geom.bounds
 
-    # rasterize with shape (rows, cols) = (lat, lon)
+    # Rasterisasi geometry shapefile kabupaten/kota
     mask = rasterize(
         [(kabupaten_geom, 1)],
         out_shape=(len(lats), len(lons)),
@@ -39,16 +42,17 @@ def process_kabupaten(args):
         dtype=np.uint8
     )
 
-    # mask output aligns with [y (rows), x (cols)] = [lat index, lon index]
+    # Masking/menambal hasil kabupaten yang bertumpang tindih dengan [y (rows), x (cols)] = [lat index, lon index]
     lat_indices, lon_indices = np.where(mask == 1)
     if len(lat_indices) == 0:
         return kabupaten_id, np.nan
 
+    # Membuat variabel list kosong berisi nilai PM2.5, titik-titik untuk interpolasi, nilai weighted average, luas area
     pm25_values = []
     lat_points, lon_points = [], []
     weighted_sum = 0
     total_area = 0
-    cell_area = abs((lats[1] - lats[0]) * (lons[1] - lons[0]))  # sesuai resolusi
+    cell_area = abs((lats[1] - lats[0]) * (lons[1] - lons[0]))  # ukuran cell/piksel sesuai resolusi
 
     for i, j in zip(lat_indices, lon_indices):
         # karena NetCDF biasanya [lat, lon], pastikan lats turun → indeks dibalik
@@ -60,8 +64,10 @@ def process_kabupaten(args):
             weighted_sum += val * cell_area
             total_area += cell_area
 
+    # Rumus menghitung weighted averaged jika luas areanya > 0 
     weighted_avg = weighted_sum / total_area if total_area > 0 else np.nan
 
+    # Fungsi loop untuk menghitung weighted average jika jumlah cell > 3, dan melakukan interpolasi
     if np.isnan(weighted_avg) and len(pm25_values) > 3:
         try:
             points = np.column_stack((lon_points, lat_points))
@@ -75,6 +81,8 @@ def process_kabupaten(args):
         return kabupaten_id, weighted_avg
 
 def monthly_pm25_data_indonesia(nc_file_path, kabupaten_gdf):
+    """ Fungsi untuk memproses di setiap bulan/file
+    """
     filename = os.path.basename(nc_file_path)
     month_id = filename.split(".")[3].split("-")[0]
     print(f"Processing {month_id}...")
@@ -95,6 +103,7 @@ def monthly_pm25_data_indonesia(nc_file_path, kabupaten_gdf):
     res_lat = lats[1] - lats[0]
     transform = Affine.translation(lons[0] - res_lon / 2, lats[0] - res_lat / 2) * Affine.scale(res_lon, res_lat)
 
+    # Memeriksa sistem koordinat shapefile administrasi (WGS 48)
     if kabupaten_gdf.crs != "EPSG:4326":
         kabupaten_gdf = kabupaten_gdf.to_crs("EPSG:4326")
 
@@ -110,12 +119,17 @@ def monthly_pm25_data_indonesia(nc_file_path, kabupaten_gdf):
     return pd.Series(kab_pm25, name=f"pm{month_id}")
 
 def process_pm25_all_month(nc_folder_path, kabupaten_gdb_path, output_csv_path):
+    """Fungsi untuk memproses semua file PM 2.5 di setiap kabupaten
+    """
     print("Loading kabupaten boundaries...")
+    # Jika ingin melakukan test beberapa kabupaten saja, tambahkan .head(jumlah kabupaten) di belakang
+    # Contoh kabupaten_gdf = gpd.read_file(kabupaten_gdb_path).head(10)
     kabupaten_gdf = gpd.read_file(kabupaten_gdb_path)
     kabupaten_gdf = kabupaten_gdf[["KDBBPS", "WADMKK", "geometry"]]
 
     hasil = kabupaten_gdf.set_index("KDBBPS").copy()
-    nc_files = [f for f in os.listdir(nc_folder_path) if f.endswith('.nc') and "V5GL0502.HybridPM25.Asia" in f]
+    # Jika ingin test 1 file saja, bisa diganti dengan nama file spesifik, misal "V5GL0502.HybridPM25.Asia.201501-201501"
+    nc_files = [f for f in os.listdir(nc_folder_path) if f.endswith('.nc') and "V5GL0502.HybridPM25.Asia" in f] 
     nc_files.sort()
 
     for f in nc_files:
@@ -128,7 +142,7 @@ def process_pm25_all_month(nc_folder_path, kabupaten_gdb_path, output_csv_path):
     print("Finished.")
 
 if __name__ == "__main__":
-    nc_folder_path = "Data/PM2.5"
+    nc_folder_path = "Data/PM2.5" # Ganti path directory penyimpanan file NetCDF jika dijalankan di komputer lokal
     kabupaten_gdb_path = "Data/RBI_Indonesia/RBI_PROV_KAB6.shp"
     output_csv_path = "Hasil/Hasil_PM25.csv"
     
