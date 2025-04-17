@@ -129,7 +129,7 @@ def process_pm25_all_month(nc_folder_path, kabupaten_gdb_path, output_csv_path):
 
 if __name__ == "__main__":
     nc_folder_path = "Data/PM2.5"
-    kabupaten_gdb_path = "Data/RBI_Indonesia"
+    kabupaten_gdb_path = "Data/RBI_Indonesia/RBI_PROV_KAB6.shp"
     output_csv_path = "Hasil/Hasil_PM25.csv"
     
     process_pm25_all_month(nc_folder_path, kabupaten_gdb_path, output_csv_path)
