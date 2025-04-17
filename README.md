@@ -13,4 +13,4 @@ Repository ini melakukan perhitungan area weighted average dan interpolasi IDW u
 Run file `Run_all.ipynb` di Github Codespaces
 
 ## Note
-Terdapat keterbatasan pemrosesan di Codespaces Github untuk file `Run.ipynb` karena Google Drive memiliki limit akses. Kode Bisa dijalankan di Google Colab atau agar lebih aman bisa dijalankan di komputer lokal, hanya mengganti Path file (di bagian bawah) ke directory penyimpanan file NetCDF dan Shapefile batas administrasi.
+Terdapat keterbatasan pemrosesan di Codespaces Github untuk file `Run.ipynb` karena Google Drive memiliki limit akses. Script `PM25_IDW.py` bisa dijalankan di Google Colab (harus mounting denga drive penyimpanan) atau agar lebih aman bisa dijalankan di komputer lokal, hanya mengganti `Path file` (di bagian bawah) ke directory penyimpanan file NetCDF dan Shapefile batas administrasi di komputer masing-masing.
