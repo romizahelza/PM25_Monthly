@@ -11,3 +11,6 @@ Repository ini melakukan perhitungan area weighted average dan interpolasi IDW u
 ## 🚀 Cara Menjalankan Kode
 
 Run file `Run_all.ipynb` di Github Codespaces
+
+## Note
+Terdapat keterbatasan pemrosesan di Codespaces Github untuk file `Run.ipynb` karena Google Drive memiliki limit akses. Kode Bisa dijalankan di Google Colab atau agar lebih aman bisa dijalankan di komputer lokal, hanya mengganti Path file (di bagian bawah) ke directory penyimpanan file NetCDF dan Shapefile batas administrasi.
